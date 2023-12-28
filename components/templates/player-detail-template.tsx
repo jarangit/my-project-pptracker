@@ -7,7 +7,6 @@ type Props = {}
 
 const PlayerDetailTemplate = (props: Props) => {
   const data = playerDetail_m_data.response[0]
-  console.log(playerDetail_m_data)
   return (
     <div>
       <Image
@@ -24,7 +23,6 @@ const PlayerDetailTemplate = (props: Props) => {
             {item.teams.out.name} {`>`}
             {item.teams.in.name}
             {`(${item.type})`}
-
           </li>
         ))}
       </div>
