@@ -3,6 +3,7 @@ import { topPlayers_m_data } from '@/mock-data/top-players'
 import { topScorers_m_data } from '@/mock-data/top-scorers'
 import { topTransfers_m_data } from '@/mock-data/top-transfers'
 import Image from 'next/image'
+import Link from 'next/link'
 import React from 'react'
 
 type Props = {}
@@ -15,15 +16,20 @@ const HomeTemplate = (props: Props) => {
         <div>
           <ul>
             {topPlayers_m_data.response.map((item, key) => (
-              <div key={key}>
-                <Image
-                  alt=''
-                  src={item.player.photo}
-                  width={100}
-                  height={100}
-                />
-                <div>{item.player.name}</div>
-              </div>
+              <li key={key}>
+                <Link href={{
+                  pathname: `/player-detail/${item.player.id}`,
+                  query: { playerName: item.player.name }
+                }} >
+                  <Image
+                    alt=''
+                    src={item.player.photo}
+                    width={100}
+                    height={100}
+                  />
+                  <div>{item.player.name}</div>
+                </Link>
+              </li>
             ))}
           </ul>
         </div>
@@ -33,15 +39,20 @@ const HomeTemplate = (props: Props) => {
         <div>
           <ul>
             {topScorers_m_data.response.map((item, key) => (
-              <div key={key}>
-                <Image
-                  alt=''
-                  src={item.player.photo}
-                  width={100}
-                  height={100}
-                />
-                <div>{item.player.name}</div>
-              </div>
+              <li key={key}>
+                <Link href={{
+                  pathname: `/player-detail/${item.player.id}`,
+                  query: { playerName: item.player.name }
+                }} >
+                  <Image
+                    alt=''
+                    src={item.player.photo}
+                    width={100}
+                    height={100}
+                  />
+                  <div>{item.player.name}</div>
+                </Link>
+              </li>
             ))}
           </ul>
         </div>
@@ -51,15 +62,20 @@ const HomeTemplate = (props: Props) => {
         <div>
           <ul>
             {topAssists_m_data.response.map((item, key) => (
-              <div key={key}>
-                <Image
-                  alt=''
-                  src={item.player.photo}
-                  width={100}
-                  height={100}
-                />
-                <div>{item.player.name}</div>
-              </div>
+              <li key={key}>
+                <Link href={{
+                  pathname: `/player-detail/${item.player.id}`,
+                  query: { playerName: item.player.name }
+                }} >
+                  <Image
+                    alt=''
+                    src={item.player.photo}
+                    width={100}
+                    height={100}
+                  />
+                  <div>{item.player.name}</div>
+                </Link>
+              </li>
             ))}
           </ul>
         </div>
@@ -69,10 +85,15 @@ const HomeTemplate = (props: Props) => {
         <div>
           <ul>
             {topTransfers_m_data.data.map((item, key) => (
-              <div key={key}>
-                <div>{item.playerID}</div>
-                <div>{item.transferFee.value}M {item.transferFee.currency}</div>
-              </div>
+              <li key={key}>
+                <Link href={{
+                  pathname: `/player-detail/${item.playerID}`,
+                  query: { playerName: 'waiting-get-name' }
+                }} >
+                  <div>{item.playerID}</div>
+                  <div>{item.transferFee.value}M {item.transferFee.currency}</div>
+                </Link>
+              </li>
             ))}
           </ul>
         </div>

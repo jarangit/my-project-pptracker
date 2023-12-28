@@ -1,10 +1,13 @@
+import Link from 'next/link'
 import React from 'react'
 
 type Props = {}
 
 const Menu = (props: Props) => {
   return (
-    <div>Menu</div>
+    <div>
+      <Link href={'/'} >Home</Link>
+    </div>
   )
 }
 
