@@ -11,7 +11,7 @@ type Props = {
 const TopTransfer = ({ data }: Props) => {
   return (
     <>
-      <Text value="Top Score" size="xl" className='font-bold' />
+      <Text value="Top Transfers" size="xl" className='font-bold' />
       <div>
         <ul>
           {data.data.map((item: any, key: any) => (

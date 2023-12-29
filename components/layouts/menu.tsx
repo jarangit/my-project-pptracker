@@ -8,7 +8,7 @@ type Props = {}
 
 const menuList = [
   {
-    text: 'PPTRACKER',
+    text: 'PP-TRACKER',
     url: '/'
   },
 ]
@@ -18,7 +18,7 @@ const Menu = (props: Props) => {
       {menuList.map((item, key) => (
         <div key={key}>
           <Link href={item.url} >
-            <Text size='xl' value={item.text} className='font-bold' />
+            <Text size='' value={item.text} className='font-bold text-xl' />
           </Link>
         </div>
       ))}
