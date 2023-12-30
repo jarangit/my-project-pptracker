@@ -9,7 +9,7 @@ const PlayerDetailPage = (props: Props) => {
   console.log(query)
   return (
     <div>
-      <PlayerDetailTemplate />
+      <PlayerDetailTemplate league={query.league} namePlayer={query.namePlayer} playerId={query.id} />
     </div>
   )
 }

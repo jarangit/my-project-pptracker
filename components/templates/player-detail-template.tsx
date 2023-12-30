@@ -1,32 +1,111 @@
 import { playerDetail_m_data } from '@/mock-data/player-detail'
 import { transferPlayer_m_data } from '@/mock-data/transfer-player'
 import Image from 'next/image'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import Text from '../atoms/text'
+import Row from '../atoms/row'
+import { getPlayerDetail } from '@/services/players'
 
-type Props = {}
+type Props = {
+  league: any;
+  namePlayer: any
+  playerId: any
+}
 
-const PlayerDetailTemplate = (props: Props) => {
+const PlayerDetailTemplate = ({ league, namePlayer, playerId }: Props) => {
+  console.log('%cMyProject%cline:14%cnamePlayer', 'color:#fff;background:#ee6f57;padding:3px;border-radius:2px', 'color:#fff;background:#1f3c88;padding:3px;border-radius:2px', 'color:#fff;background:rgb(217, 104, 49);padding:3px;border-radius:2px', namePlayer)
+  const [dataPlayerDetail, setDataPlayerDetail] = useState<any>()
+  console.log('%cMyProject%cline:14%cdataPlayerDetail', 'color:#fff;background:#ee6f57;padding:3px;border-radius:2px', 'color:#fff;background:#1f3c88;padding:3px;border-radius:2px', 'color:#fff;background:rgb(237, 222, 139);padding:3px;border-radius:2px', dataPlayerDetail)
   const data = playerDetail_m_data.response[0]
-  return (
-    <div>
-      <Image
-        alt=''
-        src={data.player.photo}
-        width={100}
-        height={100}
-      />
-      {data.player.name}
 
-      <div>
-        {transferPlayer_m_data.response[0].transfers.map((item, key) => (
-          <li key={key}>
-            {item.teams.out.name} {`>`}
-            {item.teams.in.name}
-            {`(${item.type})`}
-          </li>
-        ))}
-      </div>
-    </div>
+
+  const onGetDatePlayerDetail = async (league: any, namePlayer: any, playerId: any) => {
+    const res: any = false
+    // const res: any = await getPlayerDetail(league, namePlayer, playerId)
+    if (res) {
+      setDataPlayerDetail(res.data.response[0])
+    } else {
+      setDataPlayerDetail(data)
+    }
+  }
+
+  useEffect(() => {
+    onGetDatePlayerDetail(league, namePlayer, playerId)
+  }, [league, namePlayer, playerId]
+  )
+
+
+
+  return (
+    <>
+      {dataPlayerDetail && (
+        <div>
+          <section>
+            <Image
+              alt=''
+              src={dataPlayerDetail.player.photo}
+              width={100}
+              height={100}
+            />
+            <div>
+              <p>{dataPlayerDetail.player.name} </p>
+              <p>Name: {dataPlayerDetail.player.firstname} {dataPlayerDetail.player.lastname}</p>
+              <p>Nationality: {dataPlayerDetail.player.nationality}</p>
+              <p>Birth: {dataPlayerDetail.player.birth.date}</p>
+              <p>Age: {dataPlayerDetail.player.age}</p>
+              <p>Height: {dataPlayerDetail.player.height}</p>
+              <p>Weight: {dataPlayerDetail.player.weight}</p>
+            </div>
+          </section>
+
+          {/* static */}
+          <section className='grid grid-cols-2 gap-3'>
+            {dataPlayerDetail.statistics && dataPlayerDetail.statistics.length && dataPlayerDetail.statistics.map((item: any, key: any) => (
+              <div key={key} className='border p-3'>
+                <Text size="md" className='font-bold' value={item.league.season} />
+                <Text size="md" className='font-bold' value={item.league.name} />
+                <ul>
+                  <li>
+                    <Row>
+                      <Image
+                        alt=''
+                        src={item.team.logo}
+                        width={20}
+                        height={20}
+                      />
+                      {/* <Image
+                        alt=''
+                        src={item.league.logo}
+                        width={20}
+                        height={20}
+                      />
+                      <Image
+                        alt=''
+                        src={item.league.flag}
+                        width={20}
+                        height={20}
+                      /> */}
+                    </Row>
+                  </li>
+                  <li>Game: {item.games.appearences}</li>
+                  <li>Goals: {item.goals.total}</li>
+                  <li>Assist: {item.goals.assists}</li>
+                </ul>
+              </div>
+            ))}
+          </section>
+          <div>
+            {transferPlayer_m_data.response[0].transfers.map((item, key) => (
+              <li key={key}>
+                {item.teams.out.name} {`>`}
+                {item.teams.in.name}
+                {`(${item.type})`}
+              </li>
+            ))}
+          </div>
+        </div>
+      )}
+    </>
   )
 }
 

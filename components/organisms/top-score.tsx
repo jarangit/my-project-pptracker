@@ -14,11 +14,14 @@ const TopScore = ({ data }: Props) => {
     <>
       <Text value="Top Score" size="xl" className='font-bold' />
       <Column gap='2' className='justify-between'>
-        {data.response.map((item: any, key: any) => (
+        {data?.response.map((item: any, key: any) => (
           <div key={key} className='border p-3 w-full'>
             <Link href={{
               pathname: `/player-detail/${item.player.id}`,
-              query: { playerName: item.player.name }
+              query: { 
+                namePlayer: item.player.name,
+                league: item.statistics[0].league.id,
+              }
             }} >
               <Row className='justify-between items-center' gap='2'>
                 <Row gap='2'>
