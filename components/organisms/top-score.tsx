@@ -4,33 +4,37 @@ import React from 'react'
 import Text from '../atoms/text';
 import Row from '../atoms/row';
 import Column from '../atoms/col';
+import { IoFootball } from "react-icons/io5";
 
 type Props = {
   data: any;
 }
 
 const TopScore = ({ data }: Props) => {
+  console.log('%cMyProject%cline:13%cdata', 'color:#fff;background:#ee6f57;padding:3px;border-radius:2px', 'color:#fff;background:#1f3c88;padding:3px;border-radius:2px', 'color:#fff;background:rgb(20, 68, 106);padding:3px;border-radius:2px', data)
   return (
     <>
-      <Text value="Top Score" size="xl" className='font-bold' />
+      <Text value="TOP SCORE" size="xl" className='font-bold text-center mb-3' />
       <Column gap='2' className='justify-between'>
         {data?.response.map((item: any, key: any) => (
-          <div key={key} className='border p-3 w-full'>
+          <div key={key} className='bg-black_bg rounded-lg p-1 px-3 w-full'>
             <Link href={{
               pathname: `/player-detail/${item.player.id}`,
-              query: { 
+              query: {
                 namePlayer: item.player.name,
                 league: item.statistics[0].league.id,
               }
             }} >
               <Row className='justify-between items-center' gap='2'>
                 <Row gap='2'>
-                  <Image
-                    alt=''
-                    src={item.player.photo}
-                    width={40}
-                    height={40}
-                  />
+                  <div className='w-fit rounded-md overflow-hidden'>
+                    <Image
+                      alt=''
+                      src={item.player.photo}
+                      width={40}
+                      height={40}
+                    />
+                  </div>
                   <Text value={item.player.name} size='lg' className='font-medium' />
                   <Image
                     alt=''
@@ -39,9 +43,9 @@ const TopScore = ({ data }: Props) => {
                     height={20}
                   />
                 </Row>
-                <Row gap='2'>
-                  <Text value={item.statistics[0].goals.total} size='xs' />
-                  <Text value='Goals' />
+                <Row gap='2' className='text-green'>
+                  <Text value={item.statistics[0].goals.total} size='md' />
+                  <IoFootball />
                 </Row>
               </Row>
             </Link>

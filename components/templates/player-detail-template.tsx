@@ -13,9 +13,7 @@ type Props = {
 }
 
 const PlayerDetailTemplate = ({ league, namePlayer, playerId }: Props) => {
-  console.log('%cMyProject%cline:14%cnamePlayer', 'color:#fff;background:#ee6f57;padding:3px;border-radius:2px', 'color:#fff;background:#1f3c88;padding:3px;border-radius:2px', 'color:#fff;background:rgb(217, 104, 49);padding:3px;border-radius:2px', namePlayer)
   const [dataPlayerDetail, setDataPlayerDetail] = useState<any>()
-  console.log('%cMyProject%cline:14%cdataPlayerDetail', 'color:#fff;background:#ee6f57;padding:3px;border-radius:2px', 'color:#fff;background:#1f3c88;padding:3px;border-radius:2px', 'color:#fff;background:rgb(237, 222, 139);padding:3px;border-radius:2px', dataPlayerDetail)
   const data = playerDetail_m_data.response[0]
 
 
