@@ -40,26 +40,24 @@ const StatisticsCardOfSeason = ({ data }: Props) => {
               </Row>
               <ul>
                 <li>
-                  <Row>
-                    {/* <Image
+                  {/* <Image
                           alt=''
                           src={item.team.logo}
                           width={20}
                           height={20}
                         /> */}
-                    {/* <Image
+                  {/* <Image
                         alt=''
                         src={item.league.logo}
                         width={20}
                         height={20}
                       /> */}
-                    {/* <Image
+                  {/* <Image
                         alt=''
                         src={item.league.flag}
                         width={20}
                         height={20}
                       /> */}
-                  </Row>
                 </li>
               </ul>
               <Row className='justify-start gap-5 text-sm text-blue'>
