@@ -5,6 +5,11 @@ import React, { useEffect, useState } from 'react'
 import Text from '../atoms/text'
 import Row from '../atoms/row'
 import { getPlayerDetail } from '@/services/players'
+import Column from '../atoms/col'
+import { IoFootball } from "react-icons/io5";
+import { PiFootprintsFill } from "react-icons/pi";
+import StatisticsCardOfSeason from '../organisms/cards/statistics-of-season'
+import { MdOutlineDoubleArrow } from "react-icons/md";
 
 type Props = {
   league: any;
@@ -14,6 +19,7 @@ type Props = {
 
 const PlayerDetailTemplate = ({ league, namePlayer, playerId }: Props) => {
   const [dataPlayerDetail, setDataPlayerDetail] = useState<any>()
+  console.log('%cMyProject%cline:17%cdataPlayerDetail', 'color:#fff;background:#ee6f57;padding:3px;border-radius:2px', 'color:#fff;background:#1f3c88;padding:3px;border-radius:2px', 'color:#fff;background:rgb(1, 77, 103);padding:3px;border-radius:2px', dataPlayerDetail)
   const data = playerDetail_m_data.response[0]
 
 
@@ -32,76 +38,110 @@ const PlayerDetailTemplate = ({ league, namePlayer, playerId }: Props) => {
   }, [league, namePlayer, playerId]
   )
 
-
+  console.log(transferPlayer_m_data)
 
   return (
     <>
+      <Text value='PLAYER DETAIL' className='font-bold mb-3' />
       {dataPlayerDetail && (
-        <div>
-          <section>
-            <Image
-              alt=''
-              src={dataPlayerDetail.player.photo}
-              width={100}
-              height={100}
-            />
-            <div>
-              <p>{dataPlayerDetail.player.name} </p>
-              <p>Name: {dataPlayerDetail.player.firstname} {dataPlayerDetail.player.lastname}</p>
-              <p>Nationality: {dataPlayerDetail.player.nationality}</p>
-              <p>Birth: {dataPlayerDetail.player.birth.date}</p>
-              <p>Age: {dataPlayerDetail.player.age}</p>
-              <p>Height: {dataPlayerDetail.player.height}</p>
-              <p>Weight: {dataPlayerDetail.player.weight}</p>
-            </div>
+        <Column gap='6'>
+          <section className='p-3 rounded-lg bg-black_bg'>
+            <Row className=' !items-start' gap='6'>
+              <div className='w-fit rounded-md overflow-hidden'>
+                <Image
+                  alt=''
+                  src={dataPlayerDetail.player.photo}
+                  width={100}
+                  height={100}
+                />
+              </div>
+              <Column gap="0">
+                <Text size="xl" value={dataPlayerDetail.player.name} className='font-bold' />
+                <Text size="xs" value={dataPlayerDetail.statistics[0].team.name} className='text-green' />
+                <div className='text-xs mt-1'>
+                  <p>Age: {dataPlayerDetail.player.age}</p>
+                  <p>Height: {dataPlayerDetail.player.height}</p>
+                  <p>Weight: {dataPlayerDetail.player.weight}</p>
+                </div>
+              </Column>
+            </Row>
+
+            <Column gap='0' className='mt-6'>
+              <p >Name:
+                <span className='ml-3 text-gold'>
+                  {dataPlayerDetail.player.firstname} {dataPlayerDetail.player.lastname}
+                </span>
+              </p>
+              <p >Nationality:
+                <span className='ml-3 text-gold'>
+                  {dataPlayerDetail.player.nationality}
+                </span>
+              </p>
+              <p >Birth:
+                <span className='ml-3 text-gold'>
+                  {dataPlayerDetail.player.birth.date}
+                </span>
+              </p>
+              <p >Age:
+                <span className='ml-3 text-gold'>
+                  {dataPlayerDetail.player.age}
+                </span>
+              </p>
+              <p >Height:
+                <span className='ml-3 text-gold'>
+                  {dataPlayerDetail.player.height}
+                </span>
+              </p>
+              <p >Weight:
+                <span className='ml-3 text-gold'>
+                  {dataPlayerDetail.player.weight}
+                </span>
+              </p>
+            </Column>
           </section>
 
           {/* static */}
-          <section className='grid grid-cols-2 gap-3'>
-            {dataPlayerDetail.statistics && dataPlayerDetail.statistics.length && dataPlayerDetail.statistics.map((item: any, key: any) => (
-              <div key={key} className='border p-3'>
-                <Text size="md" className='font-bold' value={item.league.season} />
-                <Text size="md" className='font-bold' value={item.league.name} />
-                <ul>
-                  <li>
-                    <Row>
+          <StatisticsCardOfSeason data={data} />
+
+          <section>
+            <Text value='TRANSFERS' className='font-bold mb-3' />
+            <Column gap='2'>
+              {transferPlayer_m_data.response[0].transfers.map((item, key) => (
+                <div key={key} className='bg-black_bg p-3 rounded-md'>
+                  <div className='grid grid-cols-3 justify-center'>
+                    <Column className='items-center'>
                       <Image
                         alt=''
-                        src={item.team.logo}
-                        width={20}
-                        height={20}
+                        src={item.teams.out.logo}
+                        width={30}
+                        height={30}
                       />
-                      {/* <Image
-                        alt=''
-                        src={item.league.logo}
-                        width={20}
-                        height={20}
-                      />
+                      <Text value={item.teams.out.name} size='xs' />
+                    </Column>
+                    <div className='text-gold flex justify-center'>
+                      <MdOutlineDoubleArrow size={30} />
+                    </div>
+                    <Column className='items-center'>
                       <Image
                         alt=''
-                        src={item.league.flag}
-                        width={20}
-                        height={20}
-                      /> */}
-                    </Row>
-                  </li>
-                  <li>Game: {item.games.appearences}</li>
-                  <li>Goals: {item.goals.total}</li>
-                  <li>Assist: {item.goals.assists}</li>
-                </ul>
-              </div>
-            ))}
+                        src={item.teams.in.logo}
+                        width={30}
+                        height={30}
+                      />
+                      <Text value={item.teams.in.name} size='xs' />
+                    </Column>
+                  </div>
+                  <Column className='justify-center items-center text-xs mt-3'>
+                    <div className='text-gold'>
+                      {item.type !== 'N/A' ? item.type : '30 M'}
+                    </div>
+                    <div>{item.date}</div>
+                  </Column>
+                </div>
+              ))}
+            </Column>
           </section>
-          <div>
-            {transferPlayer_m_data.response[0].transfers.map((item, key) => (
-              <li key={key}>
-                {item.teams.out.name} {`>`}
-                {item.teams.in.name}
-                {`(${item.type})`}
-              </li>
-            ))}
-          </div>
-        </div>
+        </Column>
       )}
     </>
   )

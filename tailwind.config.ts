@@ -20,8 +20,9 @@ const config: Config = {
       'white': '#EEEEEE',
       'blue': '#068FFF',
       'green': '#9bffe3',
-      'black_bg': '#141414',
+      'black_bg': '#161616',
       'gold':'#ffc95d',
+      'gray':'#BCBCBC',
     }
   },
   plugins: [],

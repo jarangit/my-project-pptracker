@@ -10,7 +10,7 @@ const Layout = ({ children }: Props) => {
   return (
     <div className='flex flex-col'>
       <Menu />
-      <div className='container min-h-screen'>{children}</div>
+      <div className='container min-h-screen  !py-6'>{children}</div>
       <Footer />
     </div>
   )

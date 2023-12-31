@@ -14,7 +14,7 @@ const TopPlayer = ({ data }: Props) => {
   return (
     <>
       <Text value="TOP PLAYER" size="xl" className='font-bold text-center mb-3' />
-      <Row gap='3' className='justify-between'>
+      <Row gap='2' className='justify-between'>
         {data.response.map((item: any, key: any) => (
           <div key={key} className=' p-3 bg-black_bg relative  overflow-hidden rounded-lg  w-full'>
             <Link href={{
@@ -34,7 +34,7 @@ const TopPlayer = ({ data }: Props) => {
                 <Text value={item.statistics[0].team.name} size='xs' className='text-center text-xs ' />
               </Column>
             </Link>
-            <div className='absolute opacity-10 -left-20 -bottom-20 z-0'>
+            <div className='absolute opacity-30 -left-20 -bottom-20 z-0'>
               <Image
                 alt=''
                 src={item.statistics[0].team.logo}
