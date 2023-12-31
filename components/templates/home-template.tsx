@@ -10,6 +10,7 @@ import TopScore from '../organisms/top-score'
 import TopAssists from '../organisms/top-assists'
 import TopTransfer from '../organisms/top-transfers'
 import { getPlayerTopScore } from '@/services/players/top-srocer'
+import BannerHome from '../organisms/banners/banner-home'
 
 type Props = {}
 
@@ -33,6 +34,9 @@ const HomeTemplate = (props: Props) => {
 
   return (
     <div className='flex flex-col gap-6 my-6'>
+      <section>
+        <BannerHome />
+      </section>
       <section>
         <TopPlayer data={topPlayers_m_data} />
       </section>

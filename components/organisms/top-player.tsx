@@ -34,7 +34,7 @@ const TopPlayer = ({ data }: Props) => {
                 <Text value={item.statistics[0].team.name} size='xs' className='text-center text-xs ' />
               </Column>
             </Link>
-            <div className='absolute opacity-30 -left-20 -bottom-20 z-0'>
+            <div className='absolute opacity-30 -left-20 -bottom-20 z-0 blur-md'>
               <Image
                 alt=''
                 src={item.statistics[0].team.logo}

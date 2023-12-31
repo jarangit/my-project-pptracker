@@ -18,10 +18,10 @@ const config: Config = {
       transparent: 'transparent',
       'black': '#000',
       'white': '#EEEEEE',
-      'blue': '#068FFF',
-      'green': '#9bffe3',
+      'blue': '#f24171',
+      'green': '#f24171',
       'black_bg': '#161616',
-      'gold':'#ffc95d',
+      'gold':'#f24171',
       'gray':'#BCBCBC',
     }
   },
