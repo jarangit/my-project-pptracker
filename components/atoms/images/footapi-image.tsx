@@ -19,7 +19,7 @@ const FootAPIImage = ({ id, w, h, type }: Props) => {
       setPlayerImage(res.data)
     }
     if (res && res.status === 429) {
-      setIsReLoad(isReLoad + 300)
+      setIsReLoad(isReLoad + 500)
     } else {
       setIsReLoad(0)
     }
