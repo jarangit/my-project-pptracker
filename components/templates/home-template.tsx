@@ -1,5 +1,4 @@
 import { topAssists_m_data } from '@/mock-data/top-assists'
-import { topPlayers_m_data } from '@/mock-data/top-players'
 import { topScorers_m_data } from '@/mock-data/top-scorers'
 import { topTransfers_m_data } from '@/mock-data/top-transfers'
 import Image from 'next/image'
@@ -11,11 +10,13 @@ import TopAssists from '../organisms/top-assists'
 import TopTransfer from '../organisms/top-transfers'
 import { getPlayerTopScore } from '@/services/players/top-srocer'
 import BannerHome from '../organisms/banners/banner-home'
+import { topPlayers_m_data } from '@/mock-data/footAPI/top-player'
 
 type Props = {}
 
 const HomeTemplate = (props: Props) => {
   const [dataPlayerTopScore, setDataPlayerTopScore] = useState<any>()
+  console.log('%cMyProject%cline:18%cdataPlayerTopScore', 'color:#fff;background:#ee6f57;padding:3px;border-radius:2px', 'color:#fff;background:#1f3c88;padding:3px;border-radius:2px', 'color:#fff;background:rgb(1, 77, 103);padding:3px;border-radius:2px', dataPlayerTopScore)
 
   const onGetDateTopScorers = async () => {
     // const res = await getPlayerTopScore()
@@ -24,7 +25,7 @@ const HomeTemplate = (props: Props) => {
     if (res) {
       setDataPlayerTopScore(dataPlayerTopScore)
     } else (
-      setDataPlayerTopScore(topScorers_m_data)
+      setDataPlayerTopScore(topPlayers_m_data)
     )
   }
 
@@ -38,13 +39,13 @@ const HomeTemplate = (props: Props) => {
         <BannerHome />
       </section>
       <section>
-        <TopPlayer data={topPlayers_m_data} />
+        {/* <TopPlayer data={topPlayers_m_data} /> */}
       </section>
       <section>
-        <TopScore data={dataPlayerTopScore} />
+        <TopScore data={dataPlayerTopScore?.topPlayers.goals} />
       </section>
       <section>
-        <TopAssists data={topAssists_m_data} />
+        <TopAssists data={dataPlayerTopScore?.topPlayers.assists} />
       </section>
       {/* <section>
         <TopTransfer data={topTransfers_m_data} />

@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['media.api-sports.io']
+    domains: ['footapi7.p.rapidapi.com', 'media.api-sports.io',]
   }
 }
 
