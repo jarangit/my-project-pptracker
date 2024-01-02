@@ -10,11 +10,18 @@ type Props = {
 
 const FootAPIImage = ({ id, w, h, type }: Props) => {
   const [playerImage, setPlayerImage] = useState('')
+  const [isReLoad, setIsReLoad] = useState(0)
 
   const onGetPlayerImage = async (id: string, path: 'player' | 'tournament' | 'team' | 'manager' | 'referee') => {
     const res = await getPlayerImage(id, path)
+    console.log('%cMyProject%cline:16%cres', 'color:#fff;background:#ee6f57;padding:3px;border-radius:2px', 'color:#fff;background:#1f3c88;padding:3px;border-radius:2px', 'color:#fff;background:rgb(34, 8, 7);padding:3px;border-radius:2px', res)
     if (res) {
-      setPlayerImage(res)
+      setPlayerImage(res.data)
+    }
+    if (res && res.status === 429) {
+      setIsReLoad(isReLoad + 300)
+    } else {
+      setIsReLoad(0)
     }
   }
   useEffect(() => {
@@ -24,6 +31,15 @@ const FootAPIImage = ({ id, w, h, type }: Props) => {
   useEffect(() => {
 
   }, [playerImage])
+  useEffect(() => {
+    if (isReLoad) {
+      setTimeout(() => {
+        onGetPlayerImage(id, type)
+      }, isReLoad);
+      console.log('re call api')
+    }
+  }, [isReLoad])
+
 
   return (
     <div>

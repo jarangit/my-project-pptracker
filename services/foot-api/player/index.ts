@@ -18,11 +18,14 @@ const getPlayerImage = async (playerId: string, type: string | 'player' | 'tourn
       return foundLocalImage
     } else {
       const res = await axiosInstance.get(`/${type}/${playerId}/image`)
-      return res.request.responseURL
+      return {
+        data: res.request.responseURL,
+        status: res.status
+      }
     }
-  } catch (error) {
+  } catch (error:any) {
     console.log(error)
-    return null
+    return {status: error.response.status}
   }
 }
 export {

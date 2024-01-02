@@ -13,7 +13,7 @@ const PlayerImage = ({ id, w, h }: Props) => {
   const onGetPlayerImage = async (id: string) => {
     const res = await getPlayerImage(id, 'player')
     if (res) {
-      setPlayerImage(res)
+      setPlayerImage(res.data)
     }
   }
   useEffect(() => {
