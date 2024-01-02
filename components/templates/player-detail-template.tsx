@@ -9,7 +9,7 @@ import { IoFootball } from "react-icons/io5";
 import { PiFootprintsFill } from "react-icons/pi";
 import StatisticsCardOfSeason from '../organisms/cards/statistics-of-season'
 import { MdOutlineDoubleArrow } from "react-icons/md";
-import { getPlayerDetail, getPlayerImage } from '@/services/foot-api/player'
+import { getPlayerDetail, getImage } from '@/services/foot-api/player'
 import PlayerImage from '../atoms/images/player-image'
 
 type Props = {
@@ -35,9 +35,9 @@ const PlayerDetailTemplate = ({ league, namePlayer, playerId }: Props) => {
   }
 
   const onGetPlayerImage = async (id: string) => {
-    const res = await getPlayerImage(id, 'player')
+    const res = await getImage(id, 'player')
     if (res) {
-      setPlayerImage(res)
+      setPlayerImage(res.data)
     }
   }
 

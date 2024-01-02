@@ -1,4 +1,4 @@
-import { getPlayerImage } from '@/services/foot-api/player'
+import { getImage } from '@/services/foot-api/player'
 import React, { useEffect, useState } from 'react'
 
 type Props = {
@@ -11,7 +11,7 @@ const PlayerImage = ({ id, w, h }: Props) => {
   const [playerImage, setPlayerImage] = useState('')
 
   const onGetPlayerImage = async (id: string) => {
-    const res = await getPlayerImage(id, 'player')
+    const res = await getImage(id, 'player')
     if (res) {
       setPlayerImage(res.data)
     }

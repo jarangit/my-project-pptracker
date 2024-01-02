@@ -11,24 +11,20 @@ const getPlayerDetail = async (playerId: string) => {
     return null
   }
 }
-const getPlayerImage = async (playerId: string, type: string | 'player' | 'tournament' | 'team' | 'manager' | 'referee') => {
+const getImage = async (playerId: string, type: string | 'player' | 'tournament' | 'team' | 'manager' | 'referee') => {
   try {
-    const foundLocalImage = false
-    if (foundLocalImage) {
-      return foundLocalImage
-    } else {
       const res = await axiosInstance.get(`/${type}/${playerId}/image`)
       return {
         data: res.request.responseURL,
         status: res.status
       }
-    }
   } catch (error:any) {
     console.log(error)
     return {status: error.response.status}
   }
 }
+
 export {
   getPlayerDetail,
-  getPlayerImage
+  getImage
 }
