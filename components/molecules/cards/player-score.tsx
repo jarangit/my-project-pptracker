@@ -28,8 +28,8 @@ const PlayerScore = ({ data, index, score, game }: Props) => {
             }
           }} >
             <Row className='justify-between items-center' gap='2'>
-              <Row gap='2'>
-                <Text value={(index + 1).toString()} size="3xl" className="text-2xl bg-black w-8 flex justify-center items-center rounded-md" />
+              <Row gap='3'>
+                <Text value={(index + 1).toString()}  className="text-md md:text-2xl bg-black w-8 flex justify-center items-center rounded-md" />
                 <FootAPIImage
                   type='team'
                   id={data.team.id}
@@ -45,8 +45,8 @@ const PlayerScore = ({ data, index, score, game }: Props) => {
                   />
                 </div>
                 <Column className='' gap='0'>
-                  <Text value={data.player.shortName} size='lg' className='font-medium' />
-                  <Text value={data.team.shortName} size='xs' className='font-medium text-gray' />
+                  <Text value={data.player.shortName}  className='font-medium text-xs md:text-lg' />
+                  <Text value={data.team.shortName} size='xs' className='hidden md:block font-medium text-gray' />
                 </Column>
               </Row>
               <Row gap='6' className='text-green'>

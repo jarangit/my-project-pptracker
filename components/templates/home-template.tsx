@@ -57,7 +57,6 @@ const HomeTemplate = (props: Props) => {
   const [showFilter, setShowFilter] = useState(false)
   const { setShowLoading }: any = useContext(AppContext)
   const [dataPlayerTopScore, setDataPlayerTopScore] = useState<any>()
-  console.log('%cMyProject%cline:57%cdataPlayerTopScore', 'color:#fff;background:#ee6f57;padding:3px;border-radius:2px', 'color:#fff;background:#1f3c88;padding:3px;border-radius:2px', 'color:#fff;background:rgb(251, 178, 23);padding:3px;border-radius:2px', dataPlayerTopScore)
   const [currentTypeStats, setCurrentTypeStats] = useState('rating')
   const [currentTournamentSelected, setCurrentTournamentSelected] = useState<any>()
   const [seasons, setSeasons] = useState<any>()
@@ -87,7 +86,7 @@ const HomeTemplate = (props: Props) => {
   }
   useEffect(() => {
     setCurrentTournamentSelected(topTournaments_m_data[0])
-  }, [currentTypeStats])
+  }, [])
   useEffect(() => {
   }, [dataPlayerTopScore, currentSeasonSelected])
   useEffect(() => {
@@ -101,31 +100,36 @@ const HomeTemplate = (props: Props) => {
     }
   }, [currentSeasonSelected])
 
+  useEffect(() => {
+ 
+  }, [dataPlayerTopScore])
+  
+
   return (
     <div className='flex flex-col gap-3 my-6'>
       <section>
         <BannerHome />
         <div className='mt-6 text-right flex justify-end'>
-          <div className='border border-pink px-3 rounded-sm w-fit text-pink' onClick={() => setShowFilter(!showFilter)}>{showFilter ? 'X' : <IoFilterSharp  size={20}/>}</div>
+          <div className='border border-pink p-1 rounded-full w-8 h-8 flex justify-center items-center text-pink hover:bg-pink hover:text-white cursor-pointer' onClick={() => setShowFilter(!showFilter)}>{showFilter ? 'X' : <IoFilterSharp size={20} />}</div>
         </div>
       </section>
-      <div className={`${showFilter ? 'grid' : 'hidden'} grid-cols-4 gap-3`}>
+      <section className={`${showFilter ? 'max-h-[1000px]' : 'max-h-0'} overflow-hidden grid grid-cols-4 gap-3 transition-all duration-500`}>
         <div className='col-span-4'>
-          <strong>Leagues</strong>
-          <Row className='pl-3 text-sm flex-wrap gap-6 gap-y-2 mt-3'>
+          <strong className='text-lg border-b border-white'>Leagues</strong>
+          <div className='text-sm flex-wrap gap-6 gap-y-2 mt-3 grid grid-cols-1 md:grid-cols-3'>
             {topTournaments_m_data.map((item: any, key: any) => (
-              <div onClick={() => setCurrentTournamentSelected(item)} key={key} className={`hover:text-pink cursor-pointer ${currentTournamentSelected?.id === item.id ? "text-pink" : ""}`}>
-                <Row>
-                  <FootAPIImage id={item.id} type={'tournament'} w={20} />
+              <div onClick={() => setCurrentTournamentSelected(item)} key={key} className={`hover:text-white hover:bg-pink cursor-pointer p-1 rounded-sm ${currentTournamentSelected?.id === item.id ? "bg-pink font-bold" : "bg-black_bg text-gray"}`}>
+                <Row className='gap-3'>
+                  <FootAPIImage id={item.id} type={'tournament'} w={30} />
                   {item.name}
                 </Row>
               </div>
             ))}
-          </Row>
+          </div>
         </div>
         <div className='col-span-2'>
-          <strong>Type Stats</strong>
-          <Row className='pl-3 text-sm flex-wrap  gap-3 mt-3'>
+          <strong className='text-lg border-b border-white'>Type Stats</strong>
+          <Row className='text-sm flex-wrap  gap-1 mt-3'>
             {typeStats.map((item: any, key: any) => (
               <div onClick={() => setCurrentTypeStats((item.key))} key={key} className={`hover:text-pink cursor-pointer  px-2 rounded-sm ${currentTypeStats === item.key ? "!bg-pink " : ""}`}>
                 {item.name}
@@ -134,8 +138,8 @@ const HomeTemplate = (props: Props) => {
           </Row>
         </div>
         <div className='col-span-2'>
-          <strong>Season</strong>
-          <Row className='pl-3 text-sm flex-wrap  gap-3 mt-3'>
+          <strong className='text-lg border-b border-white'>Season</strong>
+          <Row className='text-sm flex-wrap  gap-1 mt-3'>
             {seasons && seasons.length && seasons.slice(0, 10).map((item: any, key: any) => (
               <div onClick={() => setCurrentSeasonSelected(item)} key={key} className={`hover:text-pink cursor-pointer  px-2 rounded-sm ${currentSeasonSelected?.id === item.id ? "!bg-pink " : ""}`}>
                 {item.year}
@@ -143,8 +147,10 @@ const HomeTemplate = (props: Props) => {
             ))}
           </Row>
         </div>
-      </div>
-      <TopStatistics data={dataPlayerTopScore?.topPlayers[currentTypeStats]} typeStats={currentTypeStats} />
+      </section>
+      {dataPlayerTopScore && (
+        <TopStatistics data={dataPlayerTopScore?.topPlayers[currentTypeStats]} typeStats={currentTypeStats} />
+      )}
       {/* <section>
         <TopRating data={dataPlayerTopScore?.topPlayers.rating} />
       </section> */}
