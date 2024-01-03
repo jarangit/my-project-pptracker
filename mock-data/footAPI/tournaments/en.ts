@@ -1,4 +1,4 @@
-export const categoryTournament_m_data = {
+export const tournaments_en_m_data = {
   "groups": [
     {
       "uniqueTournaments": [

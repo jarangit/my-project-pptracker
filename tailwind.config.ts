@@ -22,6 +22,7 @@ const config: Config = {
       'green': '#f24171',
       'black_bg': '#161616',
       'gold':'#f24171',
+      'pink':'#f24171',
       'gray':'#BCBCBC',
     }
   },

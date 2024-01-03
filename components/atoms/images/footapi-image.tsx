@@ -14,7 +14,6 @@ const FootAPIImage = ({ id, w, h, type }: Props) => {
 
   const onGetPlayerImage = async (id: string, path: 'player' | 'tournament' | 'team' | 'manager' | 'referee') => {
     const res = await getImage(id, path)
-    console.log('%cMyProject%cline:16%cres', 'color:#fff;background:#ee6f57;padding:3px;border-radius:2px', 'color:#fff;background:#1f3c88;padding:3px;border-radius:2px', 'color:#fff;background:rgb(34, 8, 7);padding:3px;border-radius:2px', res)
     if (res) {
       setPlayerImage(res.data)
     }
@@ -36,7 +35,6 @@ const FootAPIImage = ({ id, w, h, type }: Props) => {
       setTimeout(() => {
         onGetPlayerImage(id, type)
       }, isReLoad);
-      console.log('re call api')
     }
   }, [isReLoad])
 
