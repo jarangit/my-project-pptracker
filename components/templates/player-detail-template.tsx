@@ -1,7 +1,7 @@
 import { playerDetail_m_data } from '@/mock-data/player-detail'
 import { transferPlayer_m_data } from '@/mock-data/transfer-player'
 import Image from 'next/image'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Text from '../atoms/text'
 import Row from '../atoms/row'
 import Column from '../atoms/col'
@@ -11,6 +11,7 @@ import StatisticsCardOfSeason from '../organisms/cards/statistics-of-season'
 import { MdOutlineDoubleArrow } from "react-icons/md";
 import { getPlayerDetail, getImage } from '@/services/foot-api/player'
 import PlayerImage from '../atoms/images/player-image'
+import { AppContext } from '@/stores/context/app-state'
 
 type Props = {
   league: any;
@@ -19,18 +20,24 @@ type Props = {
 }
 
 const PlayerDetailTemplate = ({ league, namePlayer, playerId }: Props) => {
+  //context zone 
+  const { showLoading, setShowLoading }: any = useContext(AppContext)
+  console.log('%cMyProject%cline:24%cshowLoading', 'color:#fff;background:#ee6f57;padding:3px;border-radius:2px', 'color:#fff;background:#1f3c88;padding:3px;border-radius:2px', 'color:#fff;background:rgb(178, 190, 126);padding:3px;border-radius:2px', showLoading)
   const [dataPlayerDetail, setDataPlayerDetail] = useState<any>()
   const [playerImage, setPlayerImage] = useState('')
   const data = playerDetail_m_data.response[0]
 
 
   const onGetDatePlayerDetail = async (playerId: any) => {
+    setShowLoading(true)
     // const res: any = false
     const res: any = await getPlayerDetail(playerId)
     if (res) {
       setDataPlayerDetail(res.data)
+      setShowLoading(false)
     } else {
       setDataPlayerDetail(data)
+      setShowLoading(false)
     }
   }
 
