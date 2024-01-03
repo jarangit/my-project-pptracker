@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { playerDetail_m_data } from '@/mock-data/player-detail'
 import { transferPlayer_m_data } from '@/mock-data/transfer-player'
 import Image from 'next/image'
@@ -12,7 +13,12 @@ import { MdOutlineDoubleArrow } from "react-icons/md";
 import { getPlayerDetail, getImage } from '@/services/foot-api/player'
 import PlayerImage from '../atoms/images/player-image'
 import { AppContext } from '@/stores/context/app-state'
-
+import MyRadarChart from '../molecules/charts/radar-chart'
+interface IChart {
+  subject: string,
+  A: number,
+  fullMark: number,
+}
 type Props = {
   league: any;
   namePlayer: any
@@ -21,17 +27,30 @@ type Props = {
 
 const PlayerDetailTemplate = ({ league, namePlayer, playerId }: Props) => {
   //context zone 
-  const { showLoading, setShowLoading }: any = useContext(AppContext)
-  console.log('%cMyProject%cline:24%cshowLoading', 'color:#fff;background:#ee6f57;padding:3px;border-radius:2px', 'color:#fff;background:#1f3c88;padding:3px;border-radius:2px', 'color:#fff;background:rgb(178, 190, 126);padding:3px;border-radius:2px', showLoading)
+  const { setShowLoading }: any = useContext(AppContext)
   const [dataPlayerDetail, setDataPlayerDetail] = useState<any>()
-  const [playerImage, setPlayerImage] = useState('')
+  const [allData, setAllData] = useState<any>()
+  const [playerAttribute, setPlayerAttribute] = useState({
+    attacking: 0,
+    creativity: 0,
+    defending: 0,
+    technical: 0,
+    tactical: 0,
+  })
+  const [attributeChart, setAttributeChart] = useState<IChart[]>([
+    {
+      subject: '',
+      A: 0,
+      fullMark: 100,
+    }
+  ])
   const data = playerDetail_m_data.response[0]
 
 
   const onGetDatePlayerDetail = async (playerId: any) => {
     setShowLoading(true)
     // const res: any = false
-    const res: any = await getPlayerDetail(playerId)
+    const res: any = await getPlayerDetail({ playerId })
     if (res) {
       setDataPlayerDetail(res.data)
       setShowLoading(false)
@@ -40,130 +59,93 @@ const PlayerDetailTemplate = ({ league, namePlayer, playerId }: Props) => {
       setShowLoading(false)
     }
   }
+  const onGetALlData = async (playerId: string) => {
+    let result;
+    setShowLoading(true)
 
-  const onGetPlayerImage = async (id: string) => {
-    const res = await getImage(id, 'player')
-    if (res) {
-      setPlayerImage(res.data)
+    const detail: any = await getPlayerDetail({ playerId })
+    const media: any = await getPlayerDetail({ playerId, type: 'media' })
+    const transfer: any = await getPlayerDetail({ playerId, type: 'transfer' })
+    const attribute: any = await getPlayerDetail({ playerId, type: 'attribute' })
+    if (detail && media && transfer && attribute) {
+      result = {
+        detail: detail.data,
+        media: media.data,
+        transfer: transfer.data,
+        attribute: attribute.data
+      }
+      setAllData(result)
+      setShowLoading(false)
+      summaryAttribute(attribute?.data?.playerAttributeOverviews)
+
+      return result
     }
   }
 
+  const summaryAttribute = (data: any) => {
+    let result = {
+      attacking: 0,
+      creativity: 0,
+      defending: 0,
+      technical: 0,
+      tactical: 0,
+    }
+    if (data) {
+      for (let i = 0; i < data.length; i++) {
+        const element = data[i];
+        result = {
+          attacking: result.attacking += (element.attacking / data.length),
+          creativity: result.creativity += (element.creativity / data.length),
+          defending: result.defending += (element.defending / data.length),
+          technical: result.technical += (element.technical / data.length),
+          tactical: result.tactical += (element.tactical / data.length),
+        }
+      }
+      setPlayerAttribute(result)
+      setAttributeChart([
+        {
+          subject: 'Attacking',
+          A: result.attacking,
+          fullMark: 100
+        },
+        {
+          subject: 'Creativity',
+          A: result.creativity,
+          fullMark: 100
+        },
+        {
+          subject: 'Defending',
+          A: result.defending,
+          fullMark: 100
+        },
+        {
+          subject: 'Technical',
+          A: result.technical,
+          fullMark: 100
+        },
+        {
+          subject: 'Tactical',
+          A: result.tactical,
+          fullMark: 100
+        },
+      ])
+    }
+  }
+
+
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
-    onGetDatePlayerDetail(playerId)
-    onGetPlayerImage(playerId)
-  }, [playerId]
-  )
+    // onGetDatePlayerDetail(playerId)
+    onGetALlData(playerId)
+  }, [playerId])
 
 
-  console.log(transferPlayer_m_data)
 
   return (
-    // <>
-    //   <Text value='PLAYER DETAIL' className='font-bold mb-3' />
-    //   {dataPlayerDetail && (
-    //     <Column gap='6'>
-    //       <section className='p-3 rounded-lg bg-black_bg'>
-    //         <Row className=' !items-start' gap='6'>
-    //           <div className='w-fit rounded-md overflow-hidden'>
-    //             <Image
-    //               alt=''
-    //               src={dataPlayerDetail.player.photo}
-    //               width={100}
-    //               height={100}
-    //             />
-    //           </div>
-    //           <Column gap="0">
-    //             <Text size="xl" value={dataPlayerDetail.player.name} className='font-bold' />
-    //             <Text size="xs" value={dataPlayerDetail.statistics[0].team.name} className='text-green' />
-    //             <div className='text-xs mt-1'>
-    //               <p>Age: {dataPlayerDetail.player.age}</p>
-    //               <p>Height: {dataPlayerDetail.player.height}</p>
-    //               <p>Weight: {dataPlayerDetail.player.weight}</p>
-    //             </div>
-    //           </Column>
-    //         </Row>
-
-    //         <Column gap='0' className='mt-6'>
-    //           <p >Name:
-    //             <span className='ml-3 text-gold'>
-    //               {dataPlayerDetail.player.firstname} {dataPlayerDetail.player.lastname}
-    //             </span>
-    //           </p>
-    //           <p >Nationality:
-    //             <span className='ml-3 text-gold'>
-    //               {dataPlayerDetail.player.nationality}
-    //             </span>
-    //           </p>
-    //           <p >Birth:
-    //             <span className='ml-3 text-gold'>
-    //               {dataPlayerDetail.player.birth.date}
-    //             </span>
-    //           </p>
-    //           <p >Age:
-    //             <span className='ml-3 text-gold'>
-    //               {dataPlayerDetail.player.age}
-    //             </span>
-    //           </p>
-    //           <p >Height:
-    //             <span className='ml-3 text-gold'>
-    //               {dataPlayerDetail.player.height}
-    //             </span>
-    //           </p>
-    //           <p >Weight:
-    //             <span className='ml-3 text-gold'>
-    //               {dataPlayerDetail.player.weight}
-    //             </span>
-    //           </p>
-    //         </Column>
-    //       </section>
-
-    //       {/* static */}
-    //       <StatisticsCardOfSeason data={data} />
-
-    //       <section>
-    //         <Text value='TRANSFERS' className='font-bold mb-3' />
-    //         <Column gap='2'>
-    //           {transferPlayer_m_data.response[0].transfers.map((item, key) => (
-    //             <div key={key} className='bg-black_bg p-3 rounded-md'>
-    //               <div className='grid grid-cols-3 justify-center'>
-    //                 <Column className='items-center'>
-    //                   <Image
-    //                     alt=''
-    //                     src={item.teams.out.logo}
-    //                     width={30}
-    //                     height={30}
-    //                   />
-    //                   <Text value={item.teams.out.name} size='xs' />
-    //                 </Column>
-    //                 <div className='text-gold flex justify-center'>
-    //                   <MdOutlineDoubleArrow size={30} />
-    //                 </div>
-    //                 <Column className='items-center'>
-    //                   <Image
-    //                     alt=''
-    //                     src={item.teams.in.logo}
-    //                     width={30}
-    //                     height={30}
-    //                   />
-    //                   <Text value={item.teams.in.name} size='xs' />
-    //                 </Column>
-    //               </div>
-    //               <Column className='justify-center items-center text-xs mt-3'>
-    //                 <div className='text-gold'>
-    //                   {item.type !== 'N/A' ? item.type : '30 M'}
-    //                 </div>
-    //                 <div>{item.date}</div>
-    //               </Column>
-    //             </div>
-    //           ))}
-    //         </Column>
-    //       </section>
-    //     </Column>
-    //   )}
-    // </>
     <>
       <Text value='PLAYER DETAIL' className='font-bold mb-3' />
-      {dataPlayerDetail && (
+      {allData && (
         <Column gap='6'>
           <section className='p-3 rounded-lg bg-black_bg'>
             <Row className=' !items-start' gap='6'>
@@ -179,12 +161,12 @@ const PlayerDetailTemplate = ({ league, namePlayer, playerId }: Props) => {
                 />
               </div>
               <Column gap="0">
-                <Text size="xl" value={dataPlayerDetail.player.shortName} className='font-bold' />
-                <Text size="xs" value={dataPlayerDetail.player.team.name} className='text-green' />
+                <Text size="xl" value={allData.detail?.player?.shortName} className='font-bold' />
+                <Text size="xs" value={allData.detail?.player?.team.name} className='text-green' />
                 <div className='text-xs mt-1'>
-                  <p>Age: {dataPlayerDetail.player.age}</p>
-                  <p>Height: {dataPlayerDetail.player.height}</p>
-                  <p>Weight: {dataPlayerDetail.player.weight}</p>
+                  <p>Age: {allData.detail.player?.age}</p>
+                  <p>Height: {allData.detail.player?.height}</p>
+                  <p>Weight: {allData.detail.player?.weight}</p>
                 </div>
               </Column>
             </Row>
@@ -192,56 +174,56 @@ const PlayerDetailTemplate = ({ league, namePlayer, playerId }: Props) => {
             <Column gap='0' className='mt-6'>
               <p >Name:
                 <span className='ml-3 text-gold'>
-                  {dataPlayerDetail.player.name}
+                  {allData.detail.player?.name}
                 </span>
               </p>
               <p >Nationality:
                 <span className='ml-3 text-gold'>
-                  {dataPlayerDetail.player.nationality}
+                  {allData.detail.player?.nationality}
                 </span>
               </p>
               <p >Birth:
                 <span className='ml-3 text-gold'>
-                  {dataPlayerDetail.player.dateOfBirthTimestamp}
+                  {allData.detail.player?.dateOfBirthTimestamp}
                 </span>
               </p>
               <p >Age:
                 <span className='ml-3 text-gold'>
-                  {dataPlayerDetail.player.age}
+                  {allData.detail.player?.age}
                 </span>
               </p>
               <p >Height:
                 <span className='ml-3 text-gold'>
-                  {dataPlayerDetail.player.height}
+                  {allData.detail.player?.height}
                 </span>
               </p>
               {/* <p >Weight:
                 <span className='ml-3 text-gold'>
-                  {dataPlayerDetail.player.weight}
+                  {allData.detail.player?.weight}
                 </span>
               </p> */}
               <p >position:
                 <span className='ml-3 text-gold'>
-                  {dataPlayerDetail.player.position}
+                  {allData.detail.player?.position}
                 </span>
               </p>
               <p >preferredFoot:
                 <span className='ml-3 text-gold'>
-                  {dataPlayerDetail.player.preferredFoot}
+                  {allData.detail.player?.preferredFoot}
                 </span>
               </p>
               <p >shirtNumber:
                 <span className='ml-3 text-gold'>
-                  {dataPlayerDetail.player.shirtNumber}
+                  {allData.detail.player?.shirtNumber}
                 </span>
               </p>
             </Column>
           </section>
 
           {/* static */}
-          <StatisticsCardOfSeason data={data} />
+          {/* <StatisticsCardOfSeason data={data} /> */}
 
-          <section>
+          {/* <section>
             <Text value='TRANSFERS' className='font-bold mb-3' />
             <Column gap='2'>
               {transferPlayer_m_data.response[0].transfers.map((item, key) => (
@@ -275,6 +257,58 @@ const PlayerDetailTemplate = ({ league, namePlayer, playerId }: Props) => {
                     </div>
                     <div>{item.date}</div>
                   </Column>
+                </div>
+              ))}
+            </Column>
+          </section> */}
+        </Column>
+      )}
+
+      {allData && (
+        <Column gap='6' className='my-10'>
+          <section>
+            <div className='text-xl font-bold text-center mb-3'>Media</div>
+            <Column gap='6'>
+              {allData.media.media?.length > 0 && allData.media.media.map((item: any, key: any) => (
+                <div key={key}>
+                  <div className='font-bold'>{item.title}</div>
+                  <div className='pl-6'>
+                    <p className=' text-sm'>{item.subtitle}</p>
+                    <img
+                      src={item.thumbnailUrl}
+                      alt=''
+                      width={100}
+                      height={100}
+                    />
+                  </div>
+                </div>
+              ))}
+            </Column>
+          </section>
+          <section>
+            <div className='text-xl font-bold text-center mb-3'>attribute</div>
+            <div>
+              <div>attacking:{playerAttribute.attacking.toFixed(0)}</div>
+              <div>creativity:{playerAttribute.creativity.toFixed(0)}</div>
+              <div>defending:{playerAttribute.defending.toFixed(0)}</div>
+              <div>technical:{playerAttribute.technical.toFixed(0)}</div>
+              <div>technical:{playerAttribute.tactical.toFixed(0)}</div>
+            </div>
+            <MyRadarChart chartData={attributeChart} />
+          </section>
+          <section>
+            <div className='text-xl font-bold text-center mb-3'>Transfer</div>
+            <Column gap='1'>
+              {allData.transfer?.transferHistory?.length && allData.transfer.transferHistory.map((item: any, key: any) => (
+                <div key={key}>
+                  <Row className='gap-6'>
+                    <div>{item.fromTeamName}</div>
+                    <div>to</div>
+                    <div>{item.toTeamName}</div>
+
+                    <div>{item.transferFeeDescription !== '-' ? item.transferFeeDescription : 'Loan'}</div>
+
+                  </Row>
                 </div>
               ))}
             </Column>
