@@ -14,6 +14,8 @@ import { getPlayerDetail, getImage } from '@/services/foot-api/player'
 import PlayerImage from '../atoms/images/player-image'
 import { AppContext } from '@/stores/context/app-state'
 import MyRadarChart from '../molecules/charts/radar-chart'
+import Progress from '../atoms/progasse'
+import FootAPIImage from '../atoms/images/footapi-image'
 interface IChart {
   subject: string,
   A: number,
@@ -30,6 +32,7 @@ const PlayerDetailTemplate = ({ league, namePlayer, playerId }: Props) => {
   const { setShowLoading }: any = useContext(AppContext)
   const [dataPlayerDetail, setDataPlayerDetail] = useState<any>()
   const [allData, setAllData] = useState<any>()
+  console.log('%cMyProject%cline:34%callData', 'color:#fff;background:#ee6f57;padding:3px;border-radius:2px', 'color:#fff;background:#1f3c88;padding:3px;border-radius:2px', 'color:#fff;background:rgb(248, 214, 110);padding:3px;border-radius:2px', allData)
   const [playerAttribute, setPlayerAttribute] = useState({
     attacking: 0,
     creativity: 0,
@@ -266,7 +269,7 @@ const PlayerDetailTemplate = ({ league, namePlayer, playerId }: Props) => {
 
       {allData && (
         <Column gap='6' className='my-10'>
-          <section>
+          {/* <section>
             <div className='text-xl font-bold text-center mb-3'>Media</div>
             <Column gap='6'>
               {allData.media.media?.length > 0 && allData.media.media.map((item: any, key: any) => (
@@ -284,16 +287,40 @@ const PlayerDetailTemplate = ({ league, namePlayer, playerId }: Props) => {
                 </div>
               ))}
             </Column>
-          </section>
+          </section> */}
+
+          {/* attribute */}
           <section>
-            <div className='text-xl font-bold text-center mb-3'>attribute</div>
-            <div>
+            <div className='text-xl font-bold text-center mb-6'>Attribute</div>
+            <div className='grid grid-cols-5'>
+              <Column className='justify-center items-center'>
+                <Progress value={parseFloat(playerAttribute.attacking.toFixed(0))} />
+                <div className='text-sm mt-1'>Attacking</div>
+              </Column>
+              <Column className='justify-center items-center'>
+                <Progress value={parseFloat(playerAttribute.creativity.toFixed(0))} />
+                <div className='text-sm mt-1'>Creativity</div>
+              </Column>
+              <Column className='justify-center items-center'>
+                <Progress value={parseFloat(playerAttribute.defending.toFixed(0))} />
+                <div className='text-sm mt-1'>Defending</div>
+              </Column>
+              <Column className='justify-center items-center'>
+                <Progress value={parseFloat(playerAttribute.technical.toFixed(0))} />
+                <div className='text-sm mt-1'>Technical</div>
+              </Column>
+              <Column className='justify-center items-center'>
+                <Progress value={parseFloat(playerAttribute.technical.toFixed(0))} />
+                <div className='text-sm mt-1'>Technical</div>
+              </Column>
+            </div>
+            {/* <div>
               <div>attacking:{playerAttribute.attacking.toFixed(0)}</div>
               <div>creativity:{playerAttribute.creativity.toFixed(0)}</div>
               <div>defending:{playerAttribute.defending.toFixed(0)}</div>
               <div>technical:{playerAttribute.technical.toFixed(0)}</div>
               <div>technical:{playerAttribute.tactical.toFixed(0)}</div>
-            </div>
+            </div> */}
             <MyRadarChart chartData={attributeChart} />
           </section>
           <section>
@@ -302,12 +329,18 @@ const PlayerDetailTemplate = ({ league, namePlayer, playerId }: Props) => {
               {allData.transfer?.transferHistory?.length && allData.transfer.transferHistory.map((item: any, key: any) => (
                 <div key={key}>
                   <Row className='gap-6'>
-                    <div>{item.fromTeamName}</div>
-                    <div>to</div>
-                    <div>{item.toTeamName}</div>
-
+                    <div>
+                      {/* {item.fromTeamName} */}
+                      <FootAPIImage id={item.transferFrom?.id} w={20} type={'team'}
+                      />
+                    </div>
+                    <div>{'>>'}</div>
+                    <div>
+                      {/* {item.toTeamName} */}
+                      <FootAPIImage id={item.transferTo?.id} w={20} type={'team'}
+                      />
+                    </div>
                     <div>{item.transferFeeDescription !== '-' ? item.transferFeeDescription : 'Loan'}</div>
-
                   </Row>
                 </div>
               ))}
