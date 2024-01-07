@@ -19,6 +19,7 @@ import FootAPIImage from '../atoms/images/footapi-image'
 import LineChart from '../molecules/charts/line-chart'
 import moment from 'moment';
 import Moment from 'react-moment';
+import { timeStamp } from 'console'
 
 interface IChart {
   subject: string,
@@ -45,6 +46,7 @@ const PlayerDetailTemplate = ({ league, namePlayer, playerId }: Props) => {
     defending: 0,
     technical: 0,
     tactical: 0,
+
   })
   const [attributeChart, setAttributeChart] = useState<IChart[]>([
     {
@@ -57,7 +59,8 @@ const PlayerDetailTemplate = ({ league, namePlayer, playerId }: Props) => {
     date: '',
     price: 0,
     currentTeam: null,
-    displayPrice: ''
+    displayPrice: '',
+    timeStamp: 0,
   }])
   const data = playerDetail_m_data.response[0]
 
@@ -155,16 +158,31 @@ const PlayerDetailTemplate = ({ league, namePlayer, playerId }: Props) => {
   const onCreateDateTransferChart = (data: any) => {
     if (data) {
       const newData = data.transferHistory.map((item: any) => {
-        var dateString = moment.unix(item.transferDateTimestamp).format("MM/DD/YYYY");
+        var dateString = moment.unix(item.transferDateTimestamp).format("YYYY");
         return {
           date: dateString,
-          price: item.transferFeeRaw.value,
+          price: (item.transferFeeRaw?.value ?? 0) / 1000000,
           currentTeam: item.transferTo,
           displayPrice: item.transferFeeDescription,
+          timeStamp: item.transferDateTimestamp,
         }
       })
-      if (newData) setTransferChat(newData.sort((a: any, b: any) => a.price - b.price))
-      console.log(newData)
+
+      if (newData) {
+        const sorted = newData.sort((a: any, b: any) => {
+     
+          return a.timeStamp - b.timeStamp
+        })
+        setTransferChat(sorted)
+        console.log('%cMyProject%cline:174%csorted', 'color:#fff;background:#ee6f57;padding:3px;border-radius:2px', 'color:#fff;background:#1f3c88;padding:3px;border-radius:2px', 'color:#fff;background:rgb(118, 77, 57);padding:3px;border-radius:2px', sorted)
+      }
+      // if (newData) setTransferChat(newData.sort((a: any, b: any) => {
+      //   const aTime:any = new Date(a.dateString)
+      //   console.log('%cMyProject%cline:167%caTime', 'color:#fff;background:#ee6f57;padding:3px;border-radius:2px', 'color:#fff;background:#1f3c88;padding:3px;border-radius:2px', 'color:#fff;background:rgb(96, 143, 159);padding:3px;border-radius:2px', aTime)
+      //   const bTime:any = new Date(b.dateString)
+      //   return bTime - aTime
+      // }))
+      // console.log(newData)
     }
   }
 
