@@ -16,6 +16,10 @@ import { AppContext } from '@/stores/context/app-state'
 import MyRadarChart from '../molecules/charts/radar-chart'
 import Progress from '../atoms/progasse'
 import FootAPIImage from '../atoms/images/footapi-image'
+import LineChart from '../molecules/charts/line-chart'
+import moment from 'moment';
+import Moment from 'react-moment';
+
 interface IChart {
   subject: string,
   A: number,
@@ -30,6 +34,8 @@ type Props = {
 const PlayerDetailTemplate = ({ league, namePlayer, playerId }: Props) => {
   //context zone 
   const { setShowLoading }: any = useContext(AppContext)
+
+  //state zone
   const [dataPlayerDetail, setDataPlayerDetail] = useState<any>()
   const [allData, setAllData] = useState<any>()
   console.log('%cMyProject%cline:34%callData', 'color:#fff;background:#ee6f57;padding:3px;border-radius:2px', 'color:#fff;background:#1f3c88;padding:3px;border-radius:2px', 'color:#fff;background:rgb(248, 214, 110);padding:3px;border-radius:2px', allData)
@@ -47,9 +53,20 @@ const PlayerDetailTemplate = ({ league, namePlayer, playerId }: Props) => {
       fullMark: 100,
     }
   ])
+  const [transferChat, setTransferChat] = useState([{
+    date: '',
+    price: 0,
+    currentTeam: null,
+    displayPrice: ''
+  }])
   const data = playerDetail_m_data.response[0]
 
+  // styles zone 
+  const styles = {
+    bgBlack: `bg-black_bg rounded-lg p-3`
+  }
 
+  //function zone
   const onGetDatePlayerDetail = async (playerId: any) => {
     setShowLoading(true)
     // const res: any = false
@@ -80,7 +97,7 @@ const PlayerDetailTemplate = ({ league, namePlayer, playerId }: Props) => {
       setAllData(result)
       setShowLoading(false)
       summaryAttribute(attribute?.data?.playerAttributeOverviews)
-
+      onCreateDateTransferChart(transfer.data)
       return result
     }
   }
@@ -135,6 +152,22 @@ const PlayerDetailTemplate = ({ league, namePlayer, playerId }: Props) => {
     }
   }
 
+  const onCreateDateTransferChart = (data: any) => {
+    if (data) {
+      const newData = data.transferHistory.map((item: any) => {
+        var dateString = moment.unix(item.transferDateTimestamp).format("MM/DD/YYYY");
+        return {
+          date: dateString,
+          price: item.transferFeeRaw.value,
+          currentTeam: item.transferTo,
+          displayPrice: item.transferFeeDescription,
+        }
+      })
+      if (newData) setTransferChat(newData.sort((a: any, b: any) => a.price - b.price))
+      console.log(newData)
+    }
+  }
+
 
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -150,78 +183,87 @@ const PlayerDetailTemplate = ({ league, namePlayer, playerId }: Props) => {
       <Text value='PLAYER DETAIL' className='font-bold mb-3' />
       {allData && (
         <Column gap='6'>
-          <section className='p-3 rounded-lg bg-black_bg'>
-            <Row className=' !items-start' gap='6'>
-              <div className='w-fit rounded-md overflow-hidden'>
-                {/* <Image
+          <section className='p-3 rounded-lg bg-black_bg grid grid-cols-1 lg:grid-cols-4 gap-10'>
+
+            <div>
+              <Row className=' !items-start' gap='6'>
+                <div className='w-fit rounded-md overflow-hidden'>
+                  {/* <Image
                   alt=''
                   src={playerImage ?? ''}
                   width={100}
                   height={100}
                 /> */}
-                <PlayerImage
-                  id={playerId}
-                />
-              </div>
-              <Column gap="0">
-                <Text size="xl" value={allData.detail?.player?.shortName} className='font-bold' />
-                <Text size="xs" value={allData.detail?.player?.team.name} className='text-green' />
-                <div className='text-xs mt-1'>
-                  <p>Age: {allData.detail.player?.age}</p>
-                  <p>Height: {allData.detail.player?.height}</p>
-                  <p>Weight: {allData.detail.player?.weight}</p>
+                  <PlayerImage
+                    id={playerId}
+                  />
                 </div>
-              </Column>
-            </Row>
+                <Column gap="0">
+                  <Text size="xl" value={allData.detail?.player?.shortName} className='font-bold' />
+                  <Text size="xs" value={allData.detail?.player?.team.name} className='text-green' />
+                  <div className='text-xs mt-1'>
+                    <p>Age: {allData.detail.player?.age}</p>
+                    <p>Height: {allData.detail.player?.height}</p>
+                    <p>Weight: {allData.detail.player?.weight}</p>
+                  </div>
+                </Column>
+              </Row>
 
-            <Column gap='0' className='mt-6'>
-              <p >Name:
-                <span className='ml-3 text-gold'>
-                  {allData.detail.player?.name}
-                </span>
-              </p>
-              <p >Nationality:
-                <span className='ml-3 text-gold'>
-                  {allData.detail.player?.nationality}
-                </span>
-              </p>
-              <p >Birth:
-                <span className='ml-3 text-gold'>
-                  {allData.detail.player?.dateOfBirthTimestamp}
-                </span>
-              </p>
-              <p >Age:
-                <span className='ml-3 text-gold'>
-                  {allData.detail.player?.age}
-                </span>
-              </p>
-              <p >Height:
-                <span className='ml-3 text-gold'>
-                  {allData.detail.player?.height}
-                </span>
-              </p>
-              {/* <p >Weight:
+              <Column gap='0' className='mt-6'>
+                <p >Name:
+                  <span className='ml-3 text-gold'>
+                    {allData.detail.player?.name}
+                  </span>
+                </p>
+                <p >Nationality:
+                  <span className='ml-3 text-gold'>
+                    {allData.detail.player?.nationality}
+                  </span>
+                </p>
+                <p >Birth:
+                  <span className='ml-3 text-gold'>
+                    {allData.detail.player?.dateOfBirthTimestamp}
+                  </span>
+                </p>
+                <p >Age:
+                  <span className='ml-3 text-gold'>
+                    {allData.detail.player?.age}
+                  </span>
+                </p>
+                <p >Height:
+                  <span className='ml-3 text-gold'>
+                    {allData.detail.player?.height}
+                  </span>
+                </p>
+                {/* <p >Weight:
                 <span className='ml-3 text-gold'>
                   {allData.detail.player?.weight}
                 </span>
               </p> */}
-              <p >position:
-                <span className='ml-3 text-gold'>
-                  {allData.detail.player?.position}
-                </span>
-              </p>
-              <p >preferredFoot:
-                <span className='ml-3 text-gold'>
-                  {allData.detail.player?.preferredFoot}
-                </span>
-              </p>
-              <p >shirtNumber:
-                <span className='ml-3 text-gold'>
-                  {allData.detail.player?.shirtNumber}
-                </span>
-              </p>
-            </Column>
+                <p >position:
+                  <span className='ml-3 text-gold'>
+                    {allData.detail.player?.position}
+                  </span>
+                </p>
+                <p >preferredFoot:
+                  <span className='ml-3 text-gold'>
+                    {allData.detail.player?.preferredFoot}
+                  </span>
+                </p>
+                <p >shirtNumber:
+                  <span className='ml-3 text-gold'>
+                    {allData.detail.player?.shirtNumber}
+                  </span>
+                </p>
+              </Column>
+            </div>
+
+            <div className='col-span-3'>
+              <LineChart data={transferChat} />
+            </div>
           </section>
+
+
 
           {/* static */}
           {/* <StatisticsCardOfSeason data={data} /> */}
@@ -289,63 +331,66 @@ const PlayerDetailTemplate = ({ league, namePlayer, playerId }: Props) => {
             </Column>
           </section> */}
 
-          {/* attribute */}
-          <section>
-            <div className='text-xl font-bold text-center mb-6'>Attribute</div>
-            <div className='grid grid-cols-5'>
-              <Column className='justify-center items-center'>
-                <Progress value={parseFloat(playerAttribute.attacking.toFixed(0))} />
-                <div className='text-sm mt-1'>Attacking</div>
+          <div className='grid grid-cols-1 lg:grid-cols-2 gap-10'>
+            {/* attribute */}
+            <section className={`${styles.bgBlack}`}>
+              <div className='text-xl font-bold text-center mb-6'>Attribute</div>
+              <div className='grid grid-cols-5'>
+                <Column className='justify-center items-center'>
+                  <Progress value={parseFloat(playerAttribute.attacking.toFixed(0))} />
+                  <div className='text-sm mt-1'>Attacking</div>
+                </Column>
+                <Column className='justify-center items-center'>
+                  <Progress value={parseFloat(playerAttribute.creativity.toFixed(0))} />
+                  <div className='text-sm mt-1'>Creativity</div>
+                </Column>
+                <Column className='justify-center items-center'>
+                  <Progress value={parseFloat(playerAttribute.defending.toFixed(0))} />
+                  <div className='text-sm mt-1'>Defending</div>
+                </Column>
+                <Column className='justify-center items-center'>
+                  <Progress value={parseFloat(playerAttribute.technical.toFixed(0))} />
+                  <div className='text-sm mt-1'>Technical</div>
+                </Column>
+                <Column className='justify-center items-center'>
+                  <Progress value={parseFloat(playerAttribute.technical.toFixed(0))} />
+                  <div className='text-sm mt-1'>Technical</div>
+                </Column>
+              </div>
+              <MyRadarChart chartData={attributeChart} />
+            </section>
+            {/* transfer */}
+            <section className={`${styles.bgBlack}`}>
+              <div className='text-xl font-bold text-center mb-3'>Transfer</div>
+              <div>
+                <LineChart data={transferChat} />
+              </div>
+              <Column gap='1'>
+                {allData.transfer?.transferHistory?.length && allData.transfer.transferHistory.map((item: any, key: any) => (
+                  <div key={key}>
+                    <Row className='gap-6'>
+                      <div>
+                        {/* {item.fromTeamName} */}
+                        <FootAPIImage id={item.transferFrom?.id} w={20} type={'team'}
+                        />
+                      </div>
+                      <div>{'>>'}</div>
+                      <div>
+                        {/* {item.toTeamName} */}
+                        <FootAPIImage id={item.transferTo?.id} w={20} type={'team'}
+                        />
+                      </div>
+                      <div>{item.transferFeeDescription !== '-' ? item.transferFeeDescription : 'Loan'}</div>
+                    </Row>
+                  </div>
+                ))}
               </Column>
-              <Column className='justify-center items-center'>
-                <Progress value={parseFloat(playerAttribute.creativity.toFixed(0))} />
-                <div className='text-sm mt-1'>Creativity</div>
-              </Column>
-              <Column className='justify-center items-center'>
-                <Progress value={parseFloat(playerAttribute.defending.toFixed(0))} />
-                <div className='text-sm mt-1'>Defending</div>
-              </Column>
-              <Column className='justify-center items-center'>
-                <Progress value={parseFloat(playerAttribute.technical.toFixed(0))} />
-                <div className='text-sm mt-1'>Technical</div>
-              </Column>
-              <Column className='justify-center items-center'>
-                <Progress value={parseFloat(playerAttribute.technical.toFixed(0))} />
-                <div className='text-sm mt-1'>Technical</div>
-              </Column>
-            </div>
-            {/* <div>
-              <div>attacking:{playerAttribute.attacking.toFixed(0)}</div>
-              <div>creativity:{playerAttribute.creativity.toFixed(0)}</div>
-              <div>defending:{playerAttribute.defending.toFixed(0)}</div>
-              <div>technical:{playerAttribute.technical.toFixed(0)}</div>
-              <div>technical:{playerAttribute.tactical.toFixed(0)}</div>
-            </div> */}
-            <MyRadarChart chartData={attributeChart} />
-          </section>
-          <section>
-            <div className='text-xl font-bold text-center mb-3'>Transfer</div>
-            <Column gap='1'>
-              {allData.transfer?.transferHistory?.length && allData.transfer.transferHistory.map((item: any, key: any) => (
-                <div key={key}>
-                  <Row className='gap-6'>
-                    <div>
-                      {/* {item.fromTeamName} */}
-                      <FootAPIImage id={item.transferFrom?.id} w={20} type={'team'}
-                      />
-                    </div>
-                    <div>{'>>'}</div>
-                    <div>
-                      {/* {item.toTeamName} */}
-                      <FootAPIImage id={item.transferTo?.id} w={20} type={'team'}
-                      />
-                    </div>
-                    <div>{item.transferFeeDescription !== '-' ? item.transferFeeDescription : 'Loan'}</div>
-                  </Row>
-                </div>
-              ))}
-            </Column>
-          </section>
+            </section>
+          </div>
+
+
+
+
         </Column>
       )}
     </>

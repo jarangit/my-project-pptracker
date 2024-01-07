@@ -6,9 +6,12 @@ type Props = {
   w?: number
   h?: number
   type: 'player' | 'tournament' | 'team' | 'manager' | 'referee'
+  x?: number,
+  y?: number,
+  renderType?: string
 }
 
-const FootAPIImage = ({ id, w, h, type }: Props) => {
+const FootAPIImage = ({ id, w, h, type, x, y, renderType }: Props) => {
   const [playerImage, setPlayerImage] = useState('')
   const [isReLoad, setIsReLoad] = useState(0)
 
@@ -42,7 +45,14 @@ const FootAPIImage = ({ id, w, h, type }: Props) => {
   return (
     <div>
       {playerImage ? (
-        <img src={playerImage} alt="" width={w} height={h} />
+        <>
+          {renderType === "chart" ? (
+            <image x={(x ?? 0)} y={(y ?? 0 )} width={30} height={30} xlinkHref={playerImage}  />
+
+          ) : (
+            <img src={playerImage} alt="" width={w} height={h} />
+          )}
+        </>
       ) : ''}
 
 
