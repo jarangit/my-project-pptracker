@@ -9,20 +9,21 @@ const Progress = ({ value }: Props) => {
   const onCheckColor = (e: number) => {
     let result = ''
     switch (true) {
-      case e >= 90:
+      case e >= 85:
         result = "#EF2F88"
         break;
-      case e >= 80:
+   
+      case e >= 70:
         result = "#77D970"
         break;
-      case e >= 70:
+      case e >= 60:
         result = "#FFC764"
         break;
-      case e >= 60:
-        result = "#F37121"
+      case e >= 50:
+        result = "#ffff"
         break;
-      case e >= 50 || e < 50:
-        result = "#F1F1F1"
+      case e < 50:
+        result = "#e60023"
         break;
       default:
         break;

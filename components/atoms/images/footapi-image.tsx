@@ -12,7 +12,6 @@ type Props = {
 }
 
 const FootAPIImage = ({ id, w, h, type, x, y, renderType }: Props) => {
-  console.log('%cMyProject%cline:14%crenderType', 'color:#fff;background:#ee6f57;padding:3px;border-radius:2px', 'color:#fff;background:#1f3c88;padding:3px;border-radius:2px', 'color:#fff;background:rgb(254, 67, 101);padding:3px;border-radius:2px', renderType)
   const [playerImage, setPlayerImage] = useState('')
   const [isReLoad, setIsReLoad] = useState(0)
 

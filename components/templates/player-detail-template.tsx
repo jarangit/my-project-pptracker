@@ -10,16 +10,18 @@ import { IoFootball } from "react-icons/io5";
 import { PiFootprintsFill } from "react-icons/pi";
 import StatisticsCardOfSeason from '../organisms/cards/statistics-of-season'
 import { MdOutlineDoubleArrow } from "react-icons/md";
-import { getPlayerDetail, getImage } from '@/services/foot-api/player'
+import { getPlayerDetail, getImage, getPlayerRating } from '@/services/foot-api/player'
 import PlayerImage from '../atoms/images/player-image'
 import { AppContext } from '@/stores/context/app-state'
 import MyRadarChart from '../molecules/charts/radar-chart'
 import Progress from '../atoms/progasse'
 import FootAPIImage from '../atoms/images/footapi-image'
-import LineChart from '../molecules/charts/line-chart'
+import LineChart from '../molecules/charts/line-chart/transfer-line-chart'
 import moment from 'moment';
 import Moment from 'react-moment';
 import { timeStamp } from 'console'
+import TransferLineChart from '../molecules/charts/line-chart/transfer-line-chart'
+import StatisticsLineChart from '../molecules/charts/line-chart/statistics-line-chart'
 
 interface IChart {
   subject: string,
@@ -37,7 +39,8 @@ const PlayerDetailTemplate = ({ league, namePlayer, playerId }: Props) => {
   const { setShowLoading }: any = useContext(AppContext)
 
   //state zone
-  const [dataPlayerDetail, setDataPlayerDetail] = useState<any>()
+  const [tournamentSelectedId, setTournamentSelectedId] = useState<any>()
+  const [seasonSelectedId, setSeasonSelectedId] = useState<any>()
   const [allData, setAllData] = useState<any>()
   console.log('%cMyProject%cline:34%callData', 'color:#fff;background:#ee6f57;padding:3px;border-radius:2px', 'color:#fff;background:#1f3c88;padding:3px;border-radius:2px', 'color:#fff;background:rgb(248, 214, 110);padding:3px;border-radius:2px', allData)
   const [playerAttribute, setPlayerAttribute] = useState({
@@ -62,6 +65,14 @@ const PlayerDetailTemplate = ({ league, namePlayer, playerId }: Props) => {
     displayPrice: '',
     timeStamp: 0,
   }])
+  const [ratingChart, setRatingChart] = useState([{
+    date: '',
+    rating: 0,
+  }])
+  const [summaryChart, setSummaryChart] = useState([{
+    date: '',
+    rating: 0,
+  }])
   const data = playerDetail_m_data.response[0]
 
   // styles zone 
@@ -70,18 +81,7 @@ const PlayerDetailTemplate = ({ league, namePlayer, playerId }: Props) => {
   }
 
   //function zone
-  const onGetDatePlayerDetail = async (playerId: any) => {
-    setShowLoading(true)
-    // const res: any = false
-    const res: any = await getPlayerDetail({ playerId })
-    if (res) {
-      setDataPlayerDetail(res.data)
-      setShowLoading(false)
-    } else {
-      setDataPlayerDetail(data)
-      setShowLoading(false)
-    }
-  }
+
   const onGetALlData = async (playerId: string) => {
     let result;
     setShowLoading(true)
@@ -90,17 +90,23 @@ const PlayerDetailTemplate = ({ league, namePlayer, playerId }: Props) => {
     const media: any = await getPlayerDetail({ playerId, type: 'media' })
     const transfer: any = await getPlayerDetail({ playerId, type: 'transfer' })
     const attribute: any = await getPlayerDetail({ playerId, type: 'attribute' })
+    const statistics: any = await getPlayerDetail({ playerId, type: 'statistics/season' })
+    const summary: any = await getPlayerDetail({ playerId, type: 'summary' })
     if (detail && media && transfer && attribute) {
       result = {
         detail: detail.data,
         media: media.data,
         transfer: transfer.data,
-        attribute: attribute.data
+        attribute: attribute.data,
+        statistics: statistics.data,
+        summary: summary.data,
       }
       setAllData(result)
       setShowLoading(false)
       summaryAttribute(attribute?.data?.playerAttributeOverviews)
       onCreateDateTransferChart(transfer.data)
+      onInitTournament(detail.data.player.team.tournament.uniqueTournament.id, statistics.data)
+      onCreateDataSummaryChart(summary.data)
       return result
     }
   }
@@ -158,7 +164,7 @@ const PlayerDetailTemplate = ({ league, namePlayer, playerId }: Props) => {
   const onCreateDateTransferChart = (data: any) => {
     if (data) {
       const newData = data.transferHistory.map((item: any) => {
-        var dateString = moment.unix(item.transferDateTimestamp).format("YYYY");
+        const dateString = moment.unix(item.transferDateTimestamp).format("YYYY");
         return {
           date: dateString,
           price: (item.transferFeeRaw?.value ?? 0) / 1000000,
@@ -170,28 +176,77 @@ const PlayerDetailTemplate = ({ league, namePlayer, playerId }: Props) => {
 
       if (newData) {
         const sorted = newData.sort((a: any, b: any) => {
-     
+
           return a.timeStamp - b.timeStamp
         })
         setTransferChat(sorted)
-        console.log('%cMyProject%cline:174%csorted', 'color:#fff;background:#ee6f57;padding:3px;border-radius:2px', 'color:#fff;background:#1f3c88;padding:3px;border-radius:2px', 'color:#fff;background:rgb(118, 77, 57);padding:3px;border-radius:2px', sorted)
       }
-      // if (newData) setTransferChat(newData.sort((a: any, b: any) => {
-      //   const aTime:any = new Date(a.dateString)
-      //   console.log('%cMyProject%cline:167%caTime', 'color:#fff;background:#ee6f57;padding:3px;border-radius:2px', 'color:#fff;background:#1f3c88;padding:3px;border-radius:2px', 'color:#fff;background:rgb(96, 143, 159);padding:3px;border-radius:2px', aTime)
-      //   const bTime:any = new Date(b.dateString)
-      //   return bTime - aTime
-      // }))
-      // console.log(newData)
+
     }
   }
 
+  const onGetDateRating = async (playerId: string, tournamentId: string, seasonId: string) => {
+    console.log('%cMyProject%cline:185%cseasonId', 'color:#fff;background:#ee6f57;padding:3px;border-radius:2px', 'color:#fff;background:#1f3c88;padding:3px;border-radius:2px', 'color:#fff;background:rgb(130, 57, 53);padding:3px;border-radius:2px', seasonId)
+    console.log('%cMyProject%cline:185%ctournamentId', 'color:#fff;background:#ee6f57;padding:3px;border-radius:2px', 'color:#fff;background:#1f3c88;padding:3px;border-radius:2px', 'color:#fff;background:rgb(251, 178, 23);padding:3px;border-radius:2px', tournamentId)
+    console.log('%cMyProject%cline:185%cplayerId', 'color:#fff;background:#ee6f57;padding:3px;border-radius:2px', 'color:#fff;background:#1f3c88;padding:3px;border-radius:2px', 'color:#fff;background:rgb(153, 80, 84);padding:3px;border-radius:2px', playerId)
+    const rating: any = await getPlayerRating({ playerId, tournamentId, seasonId })
+    console.log('%cMyProject%cline:186%crating', 'color:#fff;background:#ee6f57;padding:3px;border-radius:2px', 'color:#fff;background:#1f3c88;padding:3px;border-radius:2px', 'color:#fff;background:rgb(34, 8, 7);padding:3px;border-radius:2px', rating)
+    if (rating) {
+      onCreateDataRatingChart(rating.data)
+    }
 
+  }
 
+  const onInitTournament = (id: string, data: any) => {
+    const found = data?.uniqueTournamentSeasons?.find((item: any) => item.uniqueTournament.id == id)
+    if (found) {
+      setTournamentSelectedId(found)
+      setSeasonSelectedId(found.seasons[0].id)
+    }
+    onGetDateRating(playerId, id, found.seasons[0].id.toString())
+  }
+
+  const onChangeSelectedTournament = (e: any) => {
+    onInitTournament(e.target.value, allData.statistics)
+  }
+  const onChangeSelectedSeason = (e: any) => {
+    setSeasonSelectedId(e.target.value)
+  }
+
+  const onCreateDataRatingChart = (data: any) => {
+    console.log(data)
+    if (data) {
+      const dataChart = data.lastRatings.map((item: any) => (
+        {
+          date: item.startTimestamp,
+          rating: item.rating
+        }
+      ))
+      console.log('new data chart rating:', dataChart)
+      if (dataChart) setRatingChart(dataChart)
+    }
+  }
+  const onCreateDataSummaryChart = (data: any) => {
+
+    console.log(data)
+    if (data) {
+      const countData = data.summary.length
+      const dataChart = data.summary
+        .slice(countData - 10, countData).map((item: any) => {
+          const dateString = moment.unix(item.timestamp).format("MM/YY");
+          return {
+            date: dateString,
+            rating: item.value < 10 ? item.value : 0
+          }
+        })
+      console.log('new data chart rating:', dataChart)
+      if (dataChart) setSummaryChart(dataChart)
+    }
+  }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
-    // onGetDatePlayerDetail(playerId)
     onGetALlData(playerId)
+    console.log('re render')
   }, [playerId])
 
 
@@ -276,8 +331,32 @@ const PlayerDetailTemplate = ({ league, namePlayer, playerId }: Props) => {
               </Column>
             </div>
 
-            <div className='col-span-3'>
-              <LineChart data={transferChat} />
+            <div className='col-span-3 overflow-hidden'>
+              {/* <div>
+                <div>statistics</div>
+                {tournamentSelectedId && (
+                  <>
+                    <select name="Tournament" value={tournamentSelectedId} id="" onChange={onChangeSelectedTournament}>
+                      {allData.statistics.uniqueTournamentSeasons?.map((item: any, key: any) => (
+                        <React.Fragment key={key}>
+                          <option value={item.uniqueTournament.id} label={item.uniqueTournament.name} selected={item.uniqueTournament.id === tournamentSelectedId.uniqueTournament.id ? true : false} ></option>
+                        </React.Fragment>
+                      ))}
+                    </select>
+                    <select name="seasons" id="" value={seasonSelectedId} onChange={onChangeSelectedSeason}>
+                      {tournamentSelectedId.seasons.map((item: any, key: any) => (
+                        <React.Fragment key={key}>
+                          <option value={item.id} label={item.name}></option>
+                        </React.Fragment>
+                      ))}
+                    </select>
+                  </>
+                )}
+              </div> */}
+              <div className={``}>
+                <div className='text-xl font-bold text-center'>Performance Last Year Rating</div>
+                <StatisticsLineChart data={summaryChart} />
+              </div>
             </div>
           </section>
 
@@ -367,8 +446,8 @@ const PlayerDetailTemplate = ({ league, namePlayer, playerId }: Props) => {
                   <div className='text-sm mt-1'>Defending</div>
                 </Column>
                 <Column className='justify-center items-center'>
-                  <Progress value={parseFloat(playerAttribute.technical.toFixed(0))} />
-                  <div className='text-sm mt-1'>Technical</div>
+                  <Progress value={parseFloat(playerAttribute.tactical.toFixed(0))} />
+                  <div className='text-sm mt-1'>Tactical</div>
                 </Column>
                 <Column className='justify-center items-center'>
                   <Progress value={parseFloat(playerAttribute.technical.toFixed(0))} />
@@ -381,12 +460,12 @@ const PlayerDetailTemplate = ({ league, namePlayer, playerId }: Props) => {
             <section className={`${styles.bgBlack}`}>
               <div className='text-xl font-bold text-center mb-3'>Transfer</div>
               <div>
-                <LineChart data={transferChat} />
+                <TransferLineChart data={transferChat} />
               </div>
-              <Column gap='1'>
+              <Column gap='1' className=''>
                 {allData.transfer?.transferHistory?.length && allData.transfer.transferHistory.map((item: any, key: any) => (
                   <div key={key}>
-                    <Row className='gap-6'>
+                    <Row className='gap-6 justify-every w-full items-center'>
                       <div>
                         {/* {item.fromTeamName} */}
                         <FootAPIImage id={item.transferFrom?.id} w={20} type={'team'}

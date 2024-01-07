@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 body {
-  background-color:#000000;
+  background-color: #000000;
   background-size: 120% 120%;
   color: #eeeeee;
 }
@@ -14,10 +14,14 @@ body {
   padding: 0 5%;
   margin: 0 auto;
 }
-input {
+input,
+select {
   outline: none;
 }
+select {
+  color: black;
+}
 
-.jr-banner-home-color{
+.jr-banner-home-color {
   background-image: linear-gradient(to right, #434343 0%, rgb(0, 0, 0) 100%);
 }

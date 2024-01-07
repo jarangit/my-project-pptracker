@@ -1,6 +1,6 @@
 import FootAPIImage from '@/components/atoms/images/footapi-image';
 import React, { useEffect, useState } from 'react'
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area } from 'recharts';
 
 
 interface IDataItem {
@@ -14,7 +14,7 @@ type Props = {
   data: IDataItem[]
 }
 
-const MyLineChart = ({ data }: Props) => {
+const TransferLineChart = ({ data }: Props) => {
   const [maxPrice, setMaxPrice] = useState(0)
 
 
@@ -52,16 +52,15 @@ const MyLineChart = ({ data }: Props) => {
         >
           {/* <CartesianGrid strokeDasharray="" /> */}
           <XAxis dataKey="date" />
-          <YAxis />
+          <YAxis dataKey={'price'} />
           <Tooltip />
-          <Legend />
+          {/* <Legend /> */}
           <Line type="monotone" dataKey="price" stroke="#f24171" isAnimationActive={false}
             dot={<CustomizedDot />} />
-          {/* <Line type="monotone" dataKey="uv" stroke="#f24534" /> */}
         </LineChart>
       </ResponsiveContainer>
     </div>
   )
 }
 
-export default MyLineChart
+export default TransferLineChart
