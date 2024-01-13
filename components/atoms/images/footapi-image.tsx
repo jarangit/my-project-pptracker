@@ -20,11 +20,11 @@ const FootAPIImage = ({ id, w, h, type, x, y, renderType }: Props) => {
     if (res) {
       setPlayerImage(res.data)
     }
-    if (res && res.status === 429) {
-      setIsReLoad(isReLoad + 100)
-    } else {
-      setIsReLoad(0)
-    }
+    // if (res && res.status === 429) {
+    //   setIsReLoad(isReLoad + 100)
+    // } else {
+    //   setIsReLoad(0)
+    // }
   }
   useEffect(() => {
     onGetPlayerImage(id, type)
