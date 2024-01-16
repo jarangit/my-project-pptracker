@@ -22,6 +22,7 @@ import Moment from 'react-moment';
 import { timeStamp } from 'console'
 import TransferLineChart from '../molecules/charts/line-chart/transfer-line-chart'
 import StatisticsLineChart from '../molecules/charts/line-chart/statistics-line-chart'
+import StatisticsBarChart from '../molecules/charts/bar-chart/statistics-bar-chart'
 
 interface IChart {
   subject: string,
@@ -83,31 +84,35 @@ const PlayerDetailTemplate = ({ league, namePlayer, playerId }: Props) => {
   //function zone
 
   const onGetALlData = async (playerId: string) => {
-    let result;
-    setShowLoading(true)
+    try {
+      let result;
+      setShowLoading(true)
 
-    const detail: any = await getPlayerDetail({ playerId })
-    const media: any = await getPlayerDetail({ playerId, type: 'media' })
-    const transfer: any = await getPlayerDetail({ playerId, type: 'transfer' })
-    const attribute: any = await getPlayerDetail({ playerId, type: 'attribute' })
-    const statistics: any = await getPlayerDetail({ playerId, type: 'statistics/season' })
-    const summary: any = await getPlayerDetail({ playerId, type: 'summary' })
-    if (detail && media && transfer && attribute) {
-      result = {
-        detail: detail.data,
-        media: media.data,
-        transfer: transfer.data,
-        attribute: attribute.data,
-        statistics: statistics.data,
-        summary: summary.data,
+      const detail: any = await getPlayerDetail({ playerId })
+      const media: any = await getPlayerDetail({ playerId, type: 'media' })
+      const transfer: any = await getPlayerDetail({ playerId, type: 'transfer' })
+      const attribute: any = await getPlayerDetail({ playerId, type: 'attribute' })
+      const statistics: any = await getPlayerDetail({ playerId, type: 'statistics/season' })
+      const summary: any = await getPlayerDetail({ playerId, type: 'summary' })
+      if (detail && media && transfer && attribute) {
+        result = {
+          detail: detail.data,
+          media: media.data,
+          transfer: transfer.data,
+          attribute: attribute.data,
+          statistics: statistics.data,
+          summary: summary.data,
+        }
+        setAllData(result)
+        setShowLoading(false)
+        summaryAttribute(attribute?.data?.playerAttributeOverviews)
+        onCreateDateTransferChart(transfer.data)
+        onInitTournament(detail.data.player.team.tournament.uniqueTournament.id, statistics.data)
+        onCreateDataSummaryChart(summary.data)
+        return result
       }
-      setAllData(result)
-      setShowLoading(false)
-      summaryAttribute(attribute?.data?.playerAttributeOverviews)
-      onCreateDateTransferChart(transfer.data)
-      onInitTournament(detail.data.player.team.tournament.uniqueTournament.id, statistics.data)
-      onCreateDataSummaryChart(summary.data)
-      return result
+    } catch (error) {
+      console.log(error)
     }
   }
 
@@ -232,7 +237,7 @@ const PlayerDetailTemplate = ({ league, namePlayer, playerId }: Props) => {
     if (data) {
       const countData = data.summary.length
       const dataChart = data.summary
-        .slice(countData - 10, countData).map((item: any) => {
+      .map((item: any) => {
           const dateString = moment.unix(item.timestamp).format("MM/YY");
           return {
             date: dateString,
@@ -355,7 +360,8 @@ const PlayerDetailTemplate = ({ league, namePlayer, playerId }: Props) => {
               </div> */}
               <div className={``}>
                 <div className='text-xl font-bold text-center'>Performance Last Year Rating</div>
-                <StatisticsLineChart data={summaryChart} />
+                {/* <StatisticsLineChart data={summaryChart} /> */}
+                <StatisticsBarChart data={summaryChart} />
               </div>
             </div>
           </section>
@@ -432,7 +438,7 @@ const PlayerDetailTemplate = ({ league, namePlayer, playerId }: Props) => {
             {/* attribute */}
             <section className={`${styles.bgBlack}`}>
               <div className='text-xl font-bold text-center mb-6'>Attribute</div>
-              <div className='grid grid-cols-5'>
+              <div className='grid grid-cols-5 gap-2'>
                 <Column className='justify-center items-center'>
                   <Progress value={parseFloat(playerAttribute.attacking.toFixed(0))} />
                   <div className='text-sm mt-1'>Attacking</div>

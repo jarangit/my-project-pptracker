@@ -21,6 +21,8 @@ import { getSeasonOfTournament } from '@/services/foot-api/tournaments'
 import { AppContext } from '@/stores/context/app-state'
 import Column from '../atoms/col'
 import { IoFilterSharp } from "react-icons/io5";
+import { getLastMatchByLeague } from '@/services/foot-api/matches/leagueLastMatch'
+import LastMatch from '../organisms/last-match'
 type Props = {}
 const typeStats = [
   {
@@ -61,6 +63,7 @@ const HomeTemplate = (props: Props) => {
   const [currentTournamentSelected, setCurrentTournamentSelected] = useState<any>()
   const [seasons, setSeasons] = useState<any>()
   const [currentSeasonSelected, setCurrentSeasonSelected] = useState<any>()
+  const [lastMatchData, setLastMatchData] = useState<any>()
   const onGetDateTopScorers = useCallback(async (tournamentId: string, seasonId: string) => {
     setShowLoading(true)
     const res = await getTopPlayerOfTournament(tournamentId, seasonId)
@@ -84,6 +87,17 @@ const HomeTemplate = (props: Props) => {
     setShowLoading(false)
 
   }
+
+  const onGetLastMatch = async () => {
+    try {
+      const res = await getLastMatchByLeague()
+      if (res) {
+        setLastMatchData(res.data)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
   useEffect(() => {
     setCurrentTournamentSelected(topTournaments_m_data[0])
   }, [])
@@ -93,6 +107,7 @@ const HomeTemplate = (props: Props) => {
     if (currentTournamentSelected?.id) {
       onGetSeason(currentTournamentSelected.id)
     }
+    onGetLastMatch()
   }, [currentTournamentSelected])
   useEffect(() => {
     if (currentSeasonSelected?.id && currentTournamentSelected?.id) {
@@ -101,9 +116,9 @@ const HomeTemplate = (props: Props) => {
   }, [currentSeasonSelected])
 
   useEffect(() => {
- 
+
   }, [dataPlayerTopScore])
-  
+
 
   return (
     <div className='flex flex-col gap-3 my-6'>
@@ -151,6 +166,10 @@ const HomeTemplate = (props: Props) => {
       {dataPlayerTopScore && (
         <TopStatistics data={dataPlayerTopScore?.topPlayers[currentTypeStats]} typeStats={currentTypeStats} />
       )}
+
+      {lastMatchData ? (
+        <LastMatch data={lastMatchData} />
+      ) : ''}
       {/* <section>
         <TopRating data={dataPlayerTopScore?.topPlayers.rating} />
       </section> */}
